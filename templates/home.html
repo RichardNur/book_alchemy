@@ -1,0 +1,60 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Library - Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <div class="content">
+    <h1>Books in the Library</h1>
+
+    <!-- Sort Form -->
+    <form action="/" method="GET">
+      <label for="sort_by">Sort By:</label>
+      <select name="sort_by" id="sort_by" onchange="this.form.submit()">
+        <option value="title" {% if sort_by == 'title' %}selected{% endif %}>Book Title</option>
+        <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author Name</option>
+      </select>
+    </form>
+
+    <!-- Search Form -->
+    <form action="/" method="GET">
+      <label for="search">Search for a book:</label>
+      <input type="text" id="search" name="search" value="{{ search_query }}">
+      <input type="submit" value="Search">
+    </form>
+
+    {% if books %}
+      <div>
+        {% for book in books %}
+          <div class="book-item">
+            <h3>{{ book.title }} ({{ book.author.name }})</h3>
+
+            <!-- Delete Button -->
+            <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="delete-button">Delete Book</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No books found that match your search criteria.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>
